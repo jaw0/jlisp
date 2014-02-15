@@ -1,0 +1,50 @@
+
+Balls in JLisp
+==============
+
+(what do you do with balls? catch and throw!...)
+
+Non-local exits are available uc]sing catch, throw, unwind-protect
+
+	(catch tag body...)
+
+sets up a catch frame, and the body executed, if no throw
+is caught, its value is that of the body, if a throw
+is caught, the value given in the throw is returned
+
+	(throw tag [value])
+
+jumps out of a catch frame with the matching tag (eqv)
+the value given will be the value returned from the
+catch, the default being #t
+
+if no matching catch frame is found, throw will return #f
+
+	(unwind-protect now later...)
+
+now will be executed, and then later. if a throw causes
+an exit out of now, later will be executed anyway.
+it returns the result of now
+
+
+The internals will throw:
+	'error		if an error is detected
+	'eof		if an eof is read
+
+
+example (untested):
+
+(if (catch 'party
+      (unwind-protect
+	  (while (not (homep cows))
+	    (if (in-mood)
+		(throw 'party)
+	      (stuff)))
+	(display "Do me anyway!\n")
+	(clean-up house)))
+    (display "Caught a Party!\n")
+  (display "No party.\n"))
+
+
+
+

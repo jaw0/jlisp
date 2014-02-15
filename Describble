@@ -1,0 +1,138 @@
+
+jl is a Lisp derived interprter. It is heavily influenced
+by emacs-lisp, with noticable influences from the suchlikes
+of scheme, common-lisp, perl, c, ...
+
+Designed to be used as an embedded interpreter, it is
+easily extended and used with both C and C++.
+(it was originally created for use with a large
+C++/X11 based medical image analysis program)
+
+Some features:
+
+Like most lisps, it is dynamically scoped.
+
+Has non-local exits: catch, throw, unwind-protect.
+
+UNIX signal interface.
+
+Rich set of i/o and system call interface.
+
+File, pipe, and string I/O ports.
+
+A full math library.
+
+Built-in documentation (self-documenting, as they say)
+
+Built-in debugging support.
+
+Macros. including ' ` , ,@
+
+Numeric datatypes: integers, bignums, floats, doubles,
+	[RSN: complex]
+
+numbers can be input/output in arbitrary radix
+
+Mark and sweep GC.
+
+
+Notes:
+
+As in scheme, #f and () are distinct objects, and not eq.
+
+Symbol names may contain just about any characters except:
+	();# and whitespace
+	. is permitted as the first character, but such symbols
+	are reserved for internal use, and may cause unexpected results if used
+
+substring takes start, length, not start, end
+
+
+Some simple examples, to demonstrate the syntactical conventions
+
+(eq 'a 1)
+	=> #f
+(equal "foo" "bar")
+	=> #f
+(nullp foo)
+	=> #t
+(intp 7)
+	=> #t
+(set! a 1)
+	=> 1
+(set-car! (cons 'foo 'bar) 'baz)
+	=> baz
+
+; I am a comment
+; defines may have an optional doctring
+(define foo #('vector 'of "stuff")
+    "a vector of stuff")
+	=> #<unspecified>
+
+; lambda:
+(define foo "Documentaion for foo"
+  (lambda (a b &optional c &rest d)
+    (display a)))
+	=> #<unspecified>
+
+(define bar (lambda arglist
+  (display (car arglist))
+  (bar (cdr arglist))))
+
+;or, more conviently, we can say:
+(defun foo (a b &rest c)
+  "A doc string"
+  (if (boundp c)
+    (foo (cdr c) a b (car c))))
+
+; CL arglists are supported (to some extent)
+(defun foo (bar (baz 6 bazp) (qux "Johnny"))
+  "Docstr"
+  (print bar baz qux)
+  (if (not bazp)
+      (print "(baz used default)")))
+
+; macros are just like lambda, (but different)
+(define foo "foo is macro!"
+  (macro (a b &optional c)
+    (if (boundp c)
+      `(progn
+          (set! c (+ a b))
+          (display c))
+      (display a))))
+  
+#| I am a comment that continues
+   over several lines, followed by: |#
+(defmac foo arglist "Another macro"
+  (display arglist)
+  arglist)
+
+(eval '(+ 1 2))
+	=> 3
+
+(catch 'eof
+  (while #t
+    (display (eval (read)))))
+; the internals of read will throw 'eof at the appropriate time
+
+(read (open:read "file.jl"))
+(getc (open:string "A string to read from"))
+(putc (open:string "A string to write to") ?c)
+(display foo (open:write "|sed s/foo/bar/"))
+
+(sqrt (+ (atanh 1.4) (atan2 x y)))
+
+(docstr foo)
+=> "Another macro"
+(debug-on-entry foo)
+(cancel-debug-on-entry foo)
+
+#|
+  the included libraries, the defun.list file,
+  and builtin help (docstr symname) would be a good
+  place to look for some more examples and help...
+|#
+
+
+
+

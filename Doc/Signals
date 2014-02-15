@@ -1,0 +1,18 @@
+
+Signal interface in JLisp
+=========================
+
+handlers for all of the UNIX signals may be installed
+(modulo any system restrictions)
+
+(install-signal-handler signo thunk)
+
+signo is the signal number, most of the common names
+are defined (SIGHUP, SIGINT, ...)
+
+where thunk is a procedure (lambda, macro, ccode) requiring
+no arguments or may be:
+
+	(), SIG_IGN	to ignore the signal
+	#t, SIG_DFL	use the system default handler
+

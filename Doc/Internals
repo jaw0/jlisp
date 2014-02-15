@@ -1,0 +1,61 @@
+
+Obj:
+..............................00	pointer to class1
+.............................010	int
+..........................000110	character
+..........................001110	const sym
+		( #t #f () #<eof> #<unspecified> #<undefined> )
+
+..........................010110	Symbols
+
+..........................011110	(unused immediate bit patterns)
+..........................100110	
+..........................101110	
+..........................110110	
+..........................111110	
+
+
+class1:
+
+	car				cdr
+...............................0  ...............................G	cons cell
+ppppppppppppppppppppxttttttttPG1  ................................
+
+	G = gc mark bit (GCBIT)
+	P = gc protect bit (SDBIT)
+	tttttttt = type (8bits)
+	x = reserved for future use (=0)
+	p = type dependant params (20bits)
+
+type:			cdr		params
+
+float			float		(unused)
+double			double*		(unused)
+complex			complex*	(unused)
+string			char*		length
+				length will be <0 if it is a constant string
+
+vector			Obj*		length
+envvec			Obj*		length
+	(same as a vector) contains chains of symboxes
+
+bignum			short*		length
+symol box		SymBox*		(unused)
+free cell		(next free cell)* (unused)
+c-code			Defun_Decl*	(unused)
+
+cell box		Cell*		(unused)
+	Cells in box:			
+	  [0]	num of cells		next box
+	  [1]	num free		next free
+	  [2]		first used cell
+
+ioport			FILE*		< ungetbit
+					  ungetchar<8bit>
+					  subsubtype/unused<5bits>
+					  subtype<4bits> w r >
+
+function		(()  params . body)	<debugme>
+macro			(()  params . body)	<debugme>
+closure			(env params . body)	<debugme>
+

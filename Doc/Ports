@@ -1,0 +1,64 @@
+
+Ports in JLisp
+==============
+
+ports are the object we use for i/o
+
+we can open a file:
+
+	(open:read "filename")
+	(open:write "foo.bar")
+	(open:read/write "Glark.doc")
+	(open:append "work.log")
+
+or a pipe:
+
+	(open:pipe/in "finger bob@host")
+	(open:pipe/out "mail bob@host")
+
+or a string:
+
+	(open:string "A string to be read and written to")
+
+or a 'T':
+	(open:tee (open:write "file1") (open:write "file2")
+
+	anthing read or written to a T port is read/written
+	to/from the 1st component, and written to the 2nd.
+
+a funtion port:
+reads and writes are handed off to the specified functions
+the following port will eat anything written to it, and
+when read, yeilds an endless stream of "foo "
+		(define foo-port (open:function (let ((i 0))
+				  (closure ()
+				    (set! i (% (1+ i) 4))
+				    (nth "foo " i)))
+				foofunc  (lambda (c))))
+
+also most of the Common Lisp stream types are supported:
+	open:broadcast
+	open:twoway
+	open:echo
+	open:synonym
+	open:concat
+
+
+i/o operations on a port:
+
+	(read [port])
+	(display [port])
+	(write [port])		all read/write lisp forms
+
+	(getc port)
+	(putc port char)
+	(ungetc port char)	character at a time 
+
+	(flush port)
+	(seek port offset)
+	(tell port)		administrative tasks to ports
+
+
+ports need not be expicitly closed
+they will be closed at exit or if GCed
+

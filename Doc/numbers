@@ -1,0 +1,59 @@
+
+Numbers in Jlisp
+=================
+
+the reader recognizes the following numeric formats:
+
+	#x12F0C			hexadecimal number
+	#o377			octal number
+	#b11010			binary number
+	#d98765			decimal number
+
+	1234		a number the base determined by
+			the current value of "%input-radix%"
+
+			%input-radix% may be set to any desired base
+			in the range 2-36
+
+	1.23		a floating pt number, will also
+			obey the base %input-radix%
+
+
+On output numbers will be output in the
+base specified by "%output-radix%".
+
+floating pt numbers will have the form:
+
+	a.aaaa$eee
+
+where the number is (a.aaaa * %output-radix% ** eee) (using %output-radix% based
+arithmetic)
+
+
+numbers come in serveral types:
+	integers, bignums, floats, doubles (and complex RSN)
+
+
+conversions
+	when performing operations on mixed types, the arguments will be
+	converted to the type which preserves the most useful information.
+
+	for + - * / > < >= <= = 
+		int -> bignum -> float -> double
+
+		ints will *not* automatically upconvert on overflow
+		(ie (* 100000 100000) will likely be wrong...)
+
+	for << >> & | ^
+		the result will be either int or bignum
+
+
+	for most "named" functions (cos, sin, log,...)
+		the result will be double
+
+
+	to explicitly convert, you can use:
+		->int ->bignum ->float ->double
+		ie: (->bignum 7)
+
+

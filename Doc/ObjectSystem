@@ -1,0 +1,128 @@
+
+
+The JLISP Object System
+=======================
+
+The jlisp object system is modelled roughly after C++
+with a few CL-isms tossed in.
+
+This system supports multiple inheiritance, virtual functions, ...
+
+
+You use "defclass" to define a class. A class defination contains the
+name of the class, bases classes (if any), elements of the class,
+methods of the class, and attributes for the class. The elements
+and methods may have attributes as well. The sytax is roughly:
+
+(defclass name
+ (elements)
+ (methods)
+ attributes)
+
+name may be a simple name or (name bases...)
+elements may be simple elements or (element attributes)
+methods are of the form (name attributes definition)
+
+A simple class containing 2 elements
+
+(defclass Person
+  (name age))
+
+A more complex person, with a default initial value for name, and a method!
+
+(defclass Person
+ ((name (initial "John Doe"))
+  (age read-only))
+ ((something (lambda (this)
+               (display "called Person::something()\n")))))
+
+
+The attributes currently suuported for elements are:
+    (initial <value>)      -- to set an initial value
+    static                 -- this element exists only once per class
+    read-only              -- it may not be changed (except in the constructor)
+
+For methods:
+    virtual                -- like in C++
+    before                 -- this method is called before the methods of the base classes
+    after                  -- this method is called  after the methods of the base classes
+                                 (specifying both or neither of before and after is valid)
+    all-bases              -- the method is called on all base classes, not just the first one
+
+
+all-bases may also be specified as a class attribute, in which case it applies to methods
+which exist only on the bases classes and not on this class.
+
+
+When a class is defined (using defclass) two functions are defined, the function
+with the name of the class is used to create an instance, thus (Person) will create
+a new person. The function by that name with -p appended is the predicate, such that:
+	(Person-p (Person))
+		=> #t
+
+Also create are several methods of that class:
+
+	print (&optional port)		used to print the object
+	ctor				is the default constructor, called when created,
+					it sets the initial values
+	new				can be used to create a new instance
+	pred				is the predicate (virtual)
+	get (element)			get the value of an element
+	set (element value)		set the value of an element
+there is also a method named after each of the base classes, which return
+that object.
+
+new methods may be added to a class at any time, using the function:
+	(add-method classname methodname attributes definition)
+
+a method is called using the "method" function, like this:
+	(define bob (Person))
+	(method bob 'set 'name "Bob Smith")
+	(method bob 'set 'age 21)
+			=> ERROR read-only...
+	(method bob 'get 'name)
+			=> "Bob Smith"
+
+The print method is used automagically anytime the object is printed,
+such as in (display bob)
+
+An extended example:
+
+(defclass Person
+  ((name (initial "John Doe"))
+   (ssn  (initial "000-00-0000")))
+  ((print virtual (lambda (this &optional port)
+		    (display (method this 'get 'name) port)))))
+
+(defclass (Employee Person)
+  ((wage  (initial 3.75))
+   (hours (initial 0))
+   (dept  (initial "MailRoom")))
+  ((print virtual after (lambda (this &optional port)
+			  (display " (" port)
+			  (display (method this 'get 'dept) port)
+			  (display ")" port )))))
+
+(defclass (Manager Employee)
+  ((peons ()))
+  ((print virtual before (lambda (this &optional port)
+			   (display "Mngr. " port)))))
+
+
+
+(define bob (Manager))
+(method bob 'set 'name "Bob Smith" 'dept "Engr." 'wage 12.50)
+
+(define b (method bob 'Person))
+(Manager-p b)
+	=> #f
+
+;; but since print is virtual
+(display p)
+	=| Mngr. Bob Smith (Engr.)
+
+
+We can also use #S to create someone:
+	(display #S(Person name "Sam Goldberg"))
+		=| Sam Goldberg
+

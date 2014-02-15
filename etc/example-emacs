@@ -1,0 +1,53 @@
+
+;;;; example emacs mode code for editing jlisp code
+
+(setq auto-mode-alist
+      (append '(("\\.jl$"     . jlisp-mode)
+		("/\\.jlisprc". jlisp-mode))
+	      auto-mode-alist))
+
+
+;;; jlisp-mode is essentially emacs-lisp-mode with sugar on top...
+(defun jlisp-mode ()
+  "mode for editting jlisp code"
+  (interactive)
+  (emacs-lisp-mode)
+  (setq mode-name "jlisp")
+  (setq major-mode 'jlisp-mode)
+  
+  ;; get indent nice...
+  (modify-syntax-entry ?\{ "(}  " emacs-lisp-mode-syntax-table)
+  (modify-syntax-entry ?\} "){  " emacs-lisp-mode-syntax-table)
+
+  (put 'do                'lisp-indent-hook 2)
+  (put 'do*               'lisp-indent-hook 2)
+  (put 'dolist            'lisp-indent-hook 1)
+  (put 'dotimes           'lisp-indent-hook 1)
+  (put 'case              'lisp-indent-hook 1)
+  (put 'when              'lisp-indent-hook 1)
+  (put 'unless            'lisp-indent-hook 1)
+  (put 'while             'lisp-indent-hook 1)
+  (put 'macro             'lisp-indent-hook 1)
+  (put 'defmac            'lisp-indent-hook 'defun)
+  
+  (run-hooks 'jlisp-mode-hook))
+
+;;; and of course it has to look nice hilit...
+(hilit-set-mode-patterns
+ 'jlisp-mode
+ '(
+   (";.*" nil comment)
+   ("#|" "|#" comment)
+   (hilit-string-find ?\\ violetred-underline)
+   ("^\\s *(def\\(un\\|mac\\)[ \t\n]" "\\()\\|nil\\)" defun)
+   ("^\\s *(def\\(ine\\|var\\)" nil define)
+   ("\\(#t\\|#f\\)" nil maroon)
+   ("^\\s *(\\(provide\\|require\\|\\(auto\\)?load\\).*$" nil include)
+   ("\\s *\\&\\(rest\\|optional\\)\\s *" nil keyword)
+   ("(\\(let\\*?\\|cond\\|case\\|if\\|or\\|and\\|map\\(car\\|concat\\)\\|prog[n1*]?\\|while\\|lambda\\|macro\\|set\\([qf!]\\|-car\\|-cdr\\|s!\\)?\\|unwind-protect\\|catch\\|throw\\|error\\)[ \t\n]" 1 keyword)
+   ("(\\(car\\|cdr\\|cons\\|nconc\\|list\\|vector\\|nth\\|eq\\|equal\\|eqv\\|eval\\|funcall\\|apply\\)[ \t\n]" 1 keyword)
+   ))
+ 
+
+
+

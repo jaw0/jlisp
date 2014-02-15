@@ -1,0 +1,49 @@
+
+README file for jlisp
+=====================
+
+jlisp is a lisp interpreter. It is heavily influenced from
+the suchlikes of scheme, emacs-lisp, ...
+
+It was designed to be easily used as an embedded interpreter
+(which is what is was actually developed for)
+It is easily extended.
+
+blah, blah, blah (see the Describble file for more)
+
+To build:
+========
+
+I have compiled this under SunOS and NetBSD, but there
+ought be no trouble on elsewhats.
+
+look at the file src/jlconf.h, adjust if need be.
+edit the top level Makefile as appropriate
+type:
+	make
+	make install
+
+try it out, type:
+	./jl
+send in a bug report to the author:
+	jaw@op.net
+
+
+depending on your OS, you may get an error informing
+you of a problem with re_comp and re_exec, if this is
+the case, you have 3 choices:
+
+	get the GNU regex.c and regex.h and uncomment the
+	REGEX line in src/MAKEFILE
+or
+	define the flag NO_REGEXPS in jlconf.h to compile
+	without regular expression support
+or
+	write your own re_comp and re_exec
+
+
+also, depending on your OS, your sed may complain about
+"Output line too long" while creating the help file,
+you may ignore these (but be aware that the help file may
+be incomplete)
+

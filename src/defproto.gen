@@ -1,0 +1,12 @@
+
+/* defproto.gen creates defproto.h
+
+   which will contain complete (C++ usable)
+   prototypes for all DEFUN'ed c-coded lisp functions
+*/
+
+#define DEFUN(ln, cn, sn, min, max, ep, lp, doc, pr)	EXTERN_C Obj cn pr;
+
+#include <defun.list>
+
+

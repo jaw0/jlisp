@@ -1,0 +1,7 @@
+
+currently the ipc code is the 2nd complete rewrite, and I still don't like it
+
+you cannot have more than 67108864 different symbols.
+
+bignums are limited to 8 million bits
+

@@ -1,0 +1,77 @@
+
+
+Debugging
+=========
+
+there are several options available for debugging code
+
+in the normal case, when an error occurs, the internals
+will call the function "error-handler". the default handler
+will print a descriptive message and abort
+
+  (vector->list 'foo)
+  ERROR: vector->list: in file "user input" near line 1: ``foo'' -- WTA: vectorp
+
+
+if this does not yield enough help, the error-handler has 2 variables
+you can set:
+
+	show-trace-on-error	a backtrace will be printed on error
+	debug-on-error		enter the debugger on error
+
+
+    (set! show-trace-on-error #t)
+    (vector->list 'foo)
+    ERROR: vector->list: in file "user input" near line 3: ``foo'' -- WTA: vectorp
+      (backtrace)
+      (let ((bt (backtrace))) (while (nnullp bt) (let ((fn (cond ((nullp (ca...
+      (show-trace #t)
+      (if show-trace-on-error (show-trace #t))
+      (error-handler "vector->list" foo "WTA: vectorp")
+      (vector->list foo)
+      (eval (vector->list (quote foo)))
+      (display (eval (let ((line .lineno) (val (read))) (if (memq val (quote...
+      (catch (quote repl) (prompt) (display (eval (let ((line .lineno) (val ...
+      (if (catch (quote repl) (prompt) (display (eval (let ((line .lineno) (...
+      (while #t (if (catch (quote repl) (prompt) (display (eval (let ((line ...
+      (let* ((history (makevector 1024)) (histlen (length history)) (histrcl...
+      (repl)
+      (catch (quote eof) (repl))
+      (progn (eval (let ((x ()) (andexit #f) (userrc #t) (sysrc #t) (ipmode ...
+      (%init%)
+
+
+    (set! debug-on-error #t)
+    (vector->list 'foo)
+    ERROR: vector->list: in file "user input" near line 8: ``foo'' -- WTA: vectorp
+    >> (if debug-on-error (debugger (quote error) ()) (throw (quote repl) (li...
+    [ debugger] 
+
+
+we can also arrange for the debugger to be entered when we enter a function
+using "debug-on-entry"
+
+    (defun foo () (display "foo"))
+    (debug-on-entry foo)
+    (foo)
+    >> (foo)
+    [ debugger] 
+
+to cancel this, use "(cancel-debug-on-entry foo)"
+
+
+in the debugger, the following commands are available:
+    c   continue execution
+    q   quit to the repl
+    s   step
+    n   next
+    t   show backtrace
+    T   show backtrace more verbosely
+    b n set breakpoint at level n
+    u   clear debug at end of call flag
+    r o set the return value for the function
+    p e print the value of the expression
+    ?   help
+
+
+

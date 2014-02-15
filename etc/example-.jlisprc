@@ -1,0 +1,14 @@
+
+;;;; an example .jlisprc file
+
+(set! load-path (append
+                 (list (expand-filename "~/src/lisp"))
+                 load-path))
+ 
+(add-hook 'quit-hooks (lambda ()
+                        (display "Bye Bye\n")))
+ 
+(add-hook 'before-gc-hooks
+          (lambda () (display "Garbage collecting...\n")))
+ 
+

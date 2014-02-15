@@ -1,0 +1,25 @@
+
+Hooks in JLisp
+==============
+
+
+as in emacs, we have hooks which will be run at
+particular times
+
+to add hooks:
+
+	(add-hook 'foo-hooks thunk)
+
+where thunk is a procedure requiring 0 arguments
+
+and we run them by:
+
+	(run-hooks 'foo-hooks)
+
+
+The internals will use:
+
+	quit-hooks
+	before-gc-hooks
+	after-gc-hooks
+

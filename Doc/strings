@@ -1,0 +1,39 @@
+
+Strings & Characters in JLisp
+================
+
+Strings are delimited by "
+
+	"I am a string"
+
+strings may contain special escaped characters preceded
+by a \
+
+	"Hello\32World\n"
+
+
+characters are read in as:
+
+	?a		(the letter a)
+
+chars may also conatin escaped characters:
+
+	?\n		(newline)
+
+
+recognized escapes are:
+
+	\n	newline
+	\s	space
+	\t	tab
+	\r	return
+	\b	backspace
+	\f	form feed
+	\v	vertical tab
+	\a	bell
+	\e	escape
+	\0nnn	octal numbered char
+	\xnnn	hexadecimal numbered char
+	\nnn	decimal numbered char
+
+
